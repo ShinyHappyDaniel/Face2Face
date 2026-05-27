@@ -39,6 +39,23 @@
         .btn-admin:hover { background: var(--pink); color: var(--bg-primary); }
         .btn-client { background: transparent; border: 2px solid var(--header-bg); color: #c07090; }
         .btn-client:hover { background: var(--header-bg); color: var(--text); }
+        .login-step2 { display: none; }
+        .login-step2.active { display: block; }
+        .login-role-label { font-family: 'Red Hat Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--pink); margin-bottom: 14px; }
+        .pw-input { width: 100%; padding: 10px 12px; background: var(--bg-primary); border: 1px solid var(--border); color: var(--text); border-radius: 4px; font-family: 'Red Hat Text', sans-serif; font-size: 14px; margin-bottom: 12px; text-align: center; letter-spacing: 2px; }
+        .pw-input:focus { outline: none; border-color: var(--pink); }
+        .btn-submit-login { width: 100%; padding: 11px; background: var(--pink); color: var(--bg-primary); border: none; border-radius: 4px; font-family: 'Red Hat Mono', monospace; font-size: 13px; font-weight: 600; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; transition: all 0.2s; }
+        .btn-submit-login:hover { background: #ff9bc5; }
+        .btn-back-login { background: none; border: none; color: var(--muted); font-size: 12px; cursor: pointer; font-family: 'Red Hat Text', sans-serif; text-decoration: underline; }
+        .btn-back-login:hover { color: var(--pink); }
+
+        /* ===== STATUS PILLS ON CARD ===== */
+        .card-status-pills { display: flex; gap: 5px; margin-top: 10px; flex-wrap: wrap; }
+        .status-pill { padding: 3px 9px; border-radius: 20px; border: 1px solid var(--border); background: transparent; font-family: 'Red Hat Mono', monospace; font-size: 10px; font-weight: 600; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); transition: all 0.15s; }
+        .status-pill:hover { border-color: var(--pink); color: var(--pink); }
+        .status-pill.active-todo { border-color: var(--todo); color: var(--todo); background: rgba(111,110,110,0.12); }
+        .status-pill.active-inprogress { border-color: var(--inprogress); color: var(--inprogress); background: rgba(253,137,179,0.12); }
+        .status-pill.active-done { border-color: var(--done); color: var(--done); background: rgba(93,202,138,0.12); }
 
         /* ===== APP ===== */
         .app { max-width: 1400px; margin: 0 auto; padding: 20px; }
@@ -167,9 +184,19 @@
         <h1>Face2Face</h1>
         <p>Reklamfilm 26.05</p>
         <div id="loginError" class="login-error"></div>
-        <div class="login-buttons">
-            <button class="btn-login btn-admin" onclick="showLoginPrompt('admin')">Admin Login</button>
-            <button class="btn-login btn-client" onclick="showLoginPrompt('client')">Client Login</button>
+
+        <div id="loginStep1">
+            <div class="login-buttons">
+                <button class="btn-login btn-admin" onclick="selectRole('admin')">Admin Login</button>
+                <button class="btn-login btn-client" onclick="selectRole('client')">Client Login</button>
+            </div>
+        </div>
+
+        <div id="loginStep2" class="login-step2">
+            <div class="login-role-label" id="loginRoleLabel"></div>
+            <input type="password" id="pwInput" class="pw-input" placeholder="Password">
+            <button class="btn-submit-login" onclick="submitLogin()">Log in</button>
+            <button class="btn-back-login" onclick="backToStep1()">← Back</button>
         </div>
     </div>
 </div>
@@ -321,19 +348,39 @@
     }
 
     // ===== AUTH =====
-    function showLoginPrompt(role) {
-        const pw = prompt("Enter " + role.toUpperCase() + " password:");
-        if (!pw) return;
-        const correct = role === "admin" ? adminPass : clientPass;
+    let pendingRole = null;
+
+    function selectRole(role) {
+        pendingRole = role;
+        document.getElementById("loginStep1").style.display = "none";
+        document.getElementById("loginStep2").classList.add("active");
+        document.getElementById("loginRoleLabel").textContent = role.toUpperCase() + " — enter password";
+        document.getElementById("pwInput").value = "";
+        document.getElementById("loginError").textContent = "";
+        setTimeout(() => document.getElementById("pwInput").focus(), 50);
+    }
+
+    function backToStep1() {
+        pendingRole = null;
+        document.getElementById("loginStep1").style.display = "block";
+        document.getElementById("loginStep2").classList.remove("active");
+        document.getElementById("loginError").textContent = "";
+    }
+
+    function submitLogin() {
+        const pw = document.getElementById("pwInput").value;
+        const correct = pendingRole === "admin" ? adminPass : clientPass;
         if (pw === correct) {
-            currentRole = role;
-            currentUser = role === "admin" ? "SHP" : "Client";
-            sessionStorage.setItem("role", role);
+            currentRole = pendingRole;
+            currentUser = pendingRole === "admin" ? "SHP" : "Client";
+            sessionStorage.setItem("role", currentRole);
             sessionStorage.setItem("user", currentUser);
             enterApp();
         } else {
             const el = document.getElementById("loginError");
             el.textContent = "Incorrect password";
+            document.getElementById("pwInput").value = "";
+            document.getElementById("pwInput").focus();
             setTimeout(() => { el.textContent = ""; }, 3000);
         }
     }
@@ -438,6 +485,16 @@
                 <button class="card-btn card-btn-delete" title="Delete" onclick="event.stopPropagation(); deleteTask('${task.id}')">✕</button>`;
         }
 
+        const statuses = [
+            { val: "todo", label: "To Do" },
+            { val: "inprogress", label: "In Progress" },
+            { val: "done", label: "Done" }
+        ];
+        const pillsHtml = statuses.map(st => {
+            const activeClass = s === st.val ? "active-" + st.val : "";
+            return `<button class="status-pill ${activeClass}" onclick="event.stopPropagation(); quickStatus('${task.id}','${st.val}')">${st.label}</button>`;
+        }).join("");
+
         div.innerHTML = `
             <div class="task-header">
                 <div class="task-title">${esc(task.title)}</div>
@@ -447,7 +504,8 @@
                 <span class="task-author">${task.author || ""}</span>
                 <span class="task-date">${dateStr}</span>
                 ${n > 0 ? `<span class="task-comments-count">${n} comment${n !== 1 ? "s" : ""}</span>` : ""}
-            </div>`;
+            </div>
+            <div class="card-status-pills">${pillsHtml}</div>`;
         div.onclick = () => openDetail(task);
         return div;
     }
@@ -477,7 +535,15 @@
         const newStatus = document.getElementById("statusSelect").value;
         const task = allTasks.find(t => t.id === currentTaskId);
         db.collection(COLLECTION).doc(currentTaskId).update({ status: newStatus }).then(() => {
-            notify("Status changed to "" + newStatus + "" on "" + (task ? task.title : "") + """);
+            notify("Status changed to \"" + newStatus + "\" on \"" + (task ? task.title : "") + "\"");
+        });
+    }
+
+    function quickStatus(taskId, newStatus) {
+        const task = allTasks.find(t => t.id === taskId);
+        if (!task || task.status === newStatus) return;
+        db.collection(COLLECTION).doc(taskId).update({ status: newStatus }).then(() => {
+            notify("Status changed to \"" + newStatus + "\" on \"" + (task ? task.title : "") + "\"");
         });
     }
 
@@ -618,6 +684,8 @@
         });
     });
 
+    // Keyboard: Enter in password input submits
+    document.getElementById("pwInput").addEventListener("keydown", e => { if (e.key === "Enter") submitLogin(); });
     // Keyboard: Enter in title input submits
     document.getElementById("newTitle").addEventListener("keydown", e => { if (e.key === "Enter") createTask(); });
     document.getElementById("editTitleInput").addEventListener("keydown", e => {
