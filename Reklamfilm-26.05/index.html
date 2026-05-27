@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face2Face - Reklamfilm 26.05</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@300;500;600;700;800;900&family=Red+Hat+Mono:wght@300;400;500;600;700&family=Red+Hat+Text:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #1B1318;
+            --bg-secondary: #211D1F;
+            --bg-tertiary: #3E3B38;
+            --border: #3a2a32;
+            --header: #7D2D49;
+            --pink-accent: #FD89B3;
+            --text-primary: #FFFFFF;
+            --text-secondary: #6F6E6E;
+            --status-todo: #6F6E6E;
+            --status-inprogress: #FD89B3;
+            --status-done: #5dca8a;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Red Hat Text', sans-serif;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* ===== LOGIN SCREEN ===== */
+        .login-screen {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--header) 100%);
+        }
+
+        .login-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            padding: 40px 30px;
+            border-radius: 8px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .login-logo {
+            font-family: 'Red Hat Mono', monospace;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--pink-accent);
+            margin-bottom: 24px;
+            letter-spacing: 2px;
+        }
+
+        .login-card h1 {
+            font-family: 'Red Hat Mono', monospace;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        .login-card p {
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+            font-size: 13px;
+        }
+
+        .login-buttons {
+            display: flex;
+            gap: 12px;
+            flex-direction: column;
+        }
+
+        .btn-login {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            font-family: 'Red Hat Mono', monospace;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-admin {
+            background: var(--header);
+            color: var(--text-primary);
+        }
+
+        .btn-admin:hover {
+            background: var(--pink-accent);
+            color: var(--bg-primary);
+        }
+
+        .btn-client {
+            background: transparent;
+            border: 2px solid var(--header);
+            color: var(--header);
+        }
+
+        .btn-client:hover {
+            background: var(--header);
+            color: var(--text-primary);
+        }
+
+        .login-input {
+            width: 100%;
+            padding: 10px 12px;
+            margin-bottom: 12px;
+            border: 1px solid var(--border);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            border-radius: 4px;
+            font-family: 'Red Hat Text', sans-serif;
+            font-size: 13px;
+        }
+
+        .login-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .login-error {
+            color: #f07070;
+            font-size: 12px;
+            margin-bottom: 12px;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--pink-accent);
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .header-logo {
+            font-family: 'Red Hat Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--pink-accent);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .header-user {
+            font-family: 'Red Hat Mono', monospace;
+            font-size: 12px;
+            background: var(--header);
+            padding: 6px 12px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .header-titles {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .header-main {
+            font-family: 'Red Hat Mono', monospace;
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .header-sub {
+            font-family: 'Red Hat Display', sans-serif;
+            font-size: 18px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .btn-add {
+            padding: 10px 16px;
+            background: var(--pink-accent);
+            color: var(--bg-primary);
+            border: none;
+            border-radius: 4px;
+            font-family: 'Red Hat Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.2s;
+        }
+
+        .btn-add:hover {
+            background: #ff9bc5;
+        }
+
+        .btn-logout {
+            padding: 10px 16px;
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--text-secondary);
+            border-radius: 4px;
+            font-family: 'Red Hat Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.2s;
+        }
+
+        .btn-logout:hover {
+            border-color: var(--pink-accent);
+            color: var(--pink-accent);
+        }
+
+        /* ===== BOARD ===== */
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 1024px) {
+            .board {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .column {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 16px;
+            min-height: 400px;
+        }
+
+        .column-header {
+            font-family: 'Red Hat Mono', monospace;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .column-header.todo {
+            color: var(--status-todo);
+        }
+
+        .column-header.inprogress {
+            color: var(--status-inprogress);
+        }
+
+        .column-header.done {
+            color: var(--status-done);
+        }
+
+        .tasks-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .task-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 3px solid var(--status-todo);
+        }
+
+        .task-card.inprogress {
+            border-left-color: var(--status-inprogress);
+        }
+
+        .task-card.done {
+            border-left-color: var(--status-done);
+        }
+
+        .task-card:hover {
+            border-color: var(--pink-accent);
+            transform: translateY(-2px);
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+            gap: 8px;
+        }
+
+        .task-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            flex: 1;
+            word-break: break-word;
+        }
+
+        .task-delete {
+            background: #f07070;
+            border: none;
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 2px;
+            cursor: pointer;
+            font-size: 12px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+
+        .task-delete:hover {
+            background: #e05555;
+        }
+
+        .task-card.admin:hover .task-delete {
+            display: flex;
+        }
+
+        .task-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .task-author {
+            background: var(--bg-secondary);
+            padding: 2px 6px;
+            border-radius: 2px;
+        }
+
+        .task-comments-count {
+            background: var(--header);
+            padding: 2px 6px;
+            border-radius: 2px;
+            color: var(--text-primary);
+        }
+
+        .task-status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-family: 'Red Hat Mono', monospace;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+        }
+
+        /* ===== MODAL ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 24px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            font-family: 'Red Hat Mono', monospace;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-family: 'Red Hat Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+        }
+
+        .form-input,
+        .form-textarea,
+        .form-select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            border-radius: 4px;
+            font-family: 'Red Hat Text', sans-serif;
+            font-size: 14px;
+            resize: vertical;
+        }
+
+        .form-textarea {
+            min-height: 80px;
+        }
+
+        .form-input::placeholder,
+        .form-textarea::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-primary,
+        .btn-secondary {
+            flex: 1;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 4px;
+            font-family: 'Red Hat Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--pink-accent);
+            color: var(--bg-primary);
+        }
+
+        .btn-primary:hover {
+            background: #ff9bc5;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--pink-accent);
+            color: var(--pink-accent);
+        }
+
+        /* ===== TASK DETAIL VIEW ===== */
+        .task-detail-content {
+            display: none;
+        }
+
+        .task-detail-content.active {
+            display: block;
+        }
+
+        .task-detail-header {
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .task-detail-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .task-detail-meta {
+            display: flex;
+            gap: 12px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            flex-wrap: wrap;
+        }
+
+        .task-detail-status-select {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid var(--border);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            border-radius: 4px;
+            font-family: 'Red Hat Text', sans-serif;
+            font-size: 13px;
+            margin-bottom: 16px;
+        }
+
+        .comments-section {
+            margin-bottom: 16px;
+        }
+
+        .comments-title {
+            font-family: 'Red Hat Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .comments-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .comment {
+            background: var(--bg-primary);
+            padding: 10px;
+            border-radius: 4px;
+            border-left: 2px solid var(--header);
+            font-size: 13px;
+        }
+
+        .comment-author {
+            font-family: 'Red Hat Mono', monospace;
+            font-weight: 600;
+            color: var(--pink-accent);
+            font-size: 11px;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .comment-text {
+            color: var(--text-primary);
+            word-break: break-word;
+            margin-bottom: 4px;
+        }
+
+        .comment-time {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .add-comment-form {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .add-comment-textarea {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid var(--border);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            border-radius: 4px;
+            font-family: 'Red Hat Text', sans-serif;
+            font-size: 13px;
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .add-comment-button {
+            padding: 8px 12px;
+            background: var(--header);
+            color: var(--text-primary);
+            border: none;
+            border-radius: 4px;
+            font-family: 'Red Hat Mono', monospace;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.2s;
+        }
+
+        .add-comment-button:hover {
+            background: var(--pink-accent);
+            color: var(--bg-primary);
+        }
+
+        .empty-state {
+            text-align: center;
+            color: var(--text-secondary);
+            padding: 40px 20px;
+            font-size: 13px;
+        }
+
+        .loading {
+            text-align: center;
+            color: var(--text-secondary);
+            padding: 20px;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border);
+            border-top-color: var(--pink-accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .board {
+                grid-template-columns: 1fr;
+            }
+
+            .header-main {
+                font-size: 24px;
+            }
+
+            .header-sub {
+                font-size: 14px;
+            }
+
+            .container {
+                padding: 16px;
+            }
+
+            .modal-content {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- LOGIN SCREEN -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-card">
+            <div class="login-logo">shiny happy people</div>
+            <h1>FACE2FACE</h1>
+            <p>Reklamfilm 26.05</p>
+            <div id="loginError" class="login-error"></div>
+            <div class="login-buttons">
+                <button class="btn-login btn-admin" onclick="showLoginPrompt('admin')">Admin Login</button>
+                <button class="btn-login btn-client" onclick="showLoginPrompt('client')">Client Login</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN APP -->
+    <div id="appScreen" class="container" style="display: none;">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-logo">shiny happy people</div>
+                <div class="header-user" id="userRole">ADMIN</div>
+            </div>
+            <div class="header-titles">
+                <div class="header-main">FACE2FACE</div>
+                <div class="header-sub">Reklamfilm 26.05</div>
+            </div>
+            <div class="header-actions">
+                <button class="btn-add" onclick="openAddTaskModal()">+ Add Task</button>
+                <button class="btn-logout" onclick="logout()">Logout</button>
+            </div>
+        </div>
+
+        <div class="board" id="board">
+            <div class="column">
+                <div class="column-header todo">To Do</div>
+                <div class="tasks-list" id="todo-column"></div>
+            </div>
+            <div class="column">
+                <div class="column-header inprogress">In Progress</div>
+                <div class="tasks-list" id="inprogress-column"></div>
+            </div>
+            <div class="column">
+                <div class="column-header done">Done</div>
+                <div class="tasks-list" id="done-column"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODALS -->
+    <div id="addTaskModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">New Task</div>
+            <div class="form-group">
+                <label class="form-label">Task Title</label>
+                <input id="taskTitleInput" class="form-input" placeholder="Enter task title" autofocus>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Initial Comment (Optional)</label>
+                <textarea id="taskCommentInput" class="form-textarea" placeholder="Add a comment..."></textarea>
+            </div>
+            <div class="form-actions">
+                <button class="btn-primary" onclick="createTask()">Create Task</button>
+                <button class="btn-secondary" onclick="closeAddTaskModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="taskDetailModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">Task Details</div>
+            <div id="taskDetailContent" class="task-detail-content">
+                <div class="task-detail-header">
+                    <div class="task-detail-title" id="detailTitle"></div>
+                    <div class="task-detail-meta">
+                        <span id="detailAuthor"></span>
+                        <span id="detailCreated"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Status</label>
+                    <select id="statusSelect" class="task-detail-status-select" onchange="updateTaskStatus()">
+                        <option value="todo">To Do</option>
+                        <option value="inprogress">In Progress</option>
+                        <option value="done">Done</option>
+                    </select>
+                </div>
+
+                <div class="comments-section">
+                    <div class="comments-title">Comments</div>
+                    <div class="comments-list" id="commentsList"></div>
+                    <div class="add-comment-form">
+                        <textarea id="newCommentInput" class="add-comment-textarea" placeholder="Add your comment..."></textarea>
+                        <button class="add-comment-button" onclick="addComment()">Post Comment</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FIREBASE -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js"></script>
+
+    <script>
+        // PASTE FIREBASE CONFIG HERE
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        let db;
+        let currentUser = null;
+        let currentRole = null;
+        let currentTaskId = null;
+        let tasksUnsubscribe = null;
+        let configUnsubscribe = null;
+        let adminPassword = "shp2026";
+        let clientPassword = "face2face";
+
+        // Initialize Firebase
+        try {
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.firestore();
+        } catch (e) {
+            console.error("Firebase config missing. Update index.html with your Firebase credentials.");
+        }
+
+        // ===== AUTH =====
+        function showLoginPrompt(role) {
+            const password = prompt(`Enter ${role.toUpperCase()} password:`);
+            if (!password) return;
+
+            const correctPassword = role === "admin" ? adminPassword : clientPassword;
+
+            if (password === correctPassword) {
+                currentRole = role;
+                currentUser = role === "admin" ? "SHP" : "Client";
+                sessionStorage.setItem("role", role);
+                sessionStorage.setItem("user", currentUser);
+                showApp();
+                loadTasks();
+            } else {
+                document.getElementById("loginError").textContent = "Incorrect password";
+                setTimeout(() => {
+                    document.getElementById("loginError").textContent = "";
+                }, 3000);
+            }
+        }
+
+        function logout() {
+            sessionStorage.clear();
+            currentRole = null;
+            currentUser = null;
+            if (tasksUnsubscribe) tasksUnsubscribe();
+            if (configUnsubscribe) configUnsubscribe();
+            document.getElementById("loginScreen").style.display = "flex";
+            document.getElementById("appScreen").style.display = "none";
+            clearBoard();
+        }
+
+        function checkAuth() {
+            const role = sessionStorage.getItem("role");
+            const user = sessionStorage.getItem("user");
+            if (role && user) {
+                currentRole = role;
+                currentUser = user;
+                showApp();
+                loadTasks();
+            }
+        }
+
+        function showApp() {
+            document.getElementById("loginScreen").style.display = "none";
+            document.getElementById("appScreen").style.display = "block";
+            document.getElementById("userRole").textContent = currentRole.toUpperCase();
+        }
+
+        // ===== FIREBASE LISTENERS =====
+        function loadTasks() {
+            if (!db) return;
+
+            tasksUnsubscribe = db.collection("face2face_reklamfilm").orderBy("created", "desc").onSnapshot((snapshot) => {
+                clearBoard();
+                snapshot.forEach((doc) => {
+                    const task = { id: doc.id, ...doc.data() };
+                    renderTask(task);
+                });
+            }, (error) => {
+                console.error("Error loading tasks:", error);
+            });
+
+            // Load config to check for password updates
+            configUnsubscribe = db.collection("config").doc("auth").onSnapshot((doc) => {
+                if (doc.exists) {
+                    adminPassword = doc.data().adminPassword || "shp2026";
+                    clientPassword = doc.data().clientPassword || "face2face";
+                }
+            }, (error) => {
+                console.log("Config doc doesn't exist yet.");
+            });
+        }
+
+        function clearBoard() {
+            document.getElementById("todo-column").innerHTML = "";
+            document.getElementById("inprogress-column").innerHTML = "";
+            document.getElementById("done-column").innerHTML = "";
+        }
+
+        function renderTask(task) {
+            const status = task.status || "todo";
+            const columnId = status + "-column";
+            const column = document.getElementById(columnId);
+
+            const card = document.createElement("div");
+            card.className = `task-card ${status}`;
+            if (currentRole === "admin") card.classList.add("admin");
+
+            const commentsCount = (task.comments || []).length;
+
+            card.innerHTML = `
+                <div class="task-header">
+                    <div class="task-title">${escapeHtml(task.title)}</div>
+                    <button class="task-delete" onclick="deleteTask('${task.id}')">✕</button>
+                </div>
+                <div class="task-meta">
+                    <span class="task-author">${task.author}</span>
+                    <span class="task-comments-count">${commentsCount} comment${commentsCount !== 1 ? "s" : ""}</span>
+                </div>
+                <div class="task-status">${status}</div>
+            `;
+
+            card.onclick = (e) => {
+                if (!e.target.classList.contains("task-delete")) {
+                    openTaskDetail(task);
+                }
+            };
+
+            column.appendChild(card);
+        }
+
+        // ===== TASKS =====
+        function createTask() {
+            if (!db) return alert("Firebase not connected");
+
+            const title = document.getElementById("taskTitleInput").value.trim();
+            const comment = document.getElementById("taskCommentInput").value.trim();
+
+            if (!title) {
+                alert("Task title is required");
+                return;
+            }
+
+            const comments = comment ? [{ author: currentUser, text: comment, created: new Date() }] : [];
+
+            db.collection("face2face_reklamfilm").add({
+                title,
+                status: "todo",
+                author: currentUser,
+                created: new Date(),
+                comments
+            }).then(() => {
+                closeAddTaskModal();
+            }).catch((error) => {
+                console.error("Error creating task:", error);
+                alert("Error creating task");
+            });
+        }
+
+        function deleteTask(taskId) {
+            if (currentRole !== "admin") return alert("Only admins can delete tasks");
+            if (!confirm("Delete this task?")) return;
+
+            db.collection("face2face_reklamfilm").doc(taskId).delete().then(() => {
+                closeTaskDetail();
+            }).catch((error) => {
+                console.error("Error deleting task:", error);
+                alert("Error deleting task");
+            });
+        }
+
+        function updateTaskStatus() {
+            if (!currentTaskId || !db) return;
+
+            const newStatus = document.getElementById("statusSelect").value;
+            db.collection("face2face_reklamfilm").doc(currentTaskId).update({
+                status: newStatus
+            }).catch((error) => {
+                console.error("Error updating status:", error);
+                alert("Error updating status");
+            });
+        }
+
+        // ===== COMMENTS =====
+        function openTaskDetail(task) {
+            currentTaskId = task.id;
+            document.getElementById("detailTitle").textContent = task.title;
+            document.getElementById("detailAuthor").textContent = "By: " + task.author;
+            const created = task.created?.toDate ? task.created.toDate() : new Date(task.created);
+            document.getElementById("detailCreated").textContent = formatDate(created);
+            document.getElementById("statusSelect").value = task.status || "todo";
+
+            renderComments(task.comments || []);
+            document.getElementById("taskDetailModal").classList.add("active");
+        }
+
+        function renderComments(comments) {
+            const commentsList = document.getElementById("commentsList");
+            commentsList.innerHTML = "";
+
+            if (comments.length === 0) {
+                commentsList.innerHTML = '<div class="empty-state">No comments yet</div>';
+                return;
+            }
+
+            comments.forEach((comment) => {
+                const commentEl = document.createElement("div");
+                commentEl.className = "comment";
+                const commentDate = comment.created?.toDate ? comment.created.toDate() : new Date(comment.created);
+                commentEl.innerHTML = `
+                    <div class="comment-author">${comment.author}</div>
+                    <div class="comment-text">${escapeHtml(comment.text)}</div>
+                    <div class="comment-time">${formatDate(commentDate)}</div>
+                `;
+                commentsList.appendChild(commentEl);
+            });
+        }
+
+        function addComment() {
+            if (!currentTaskId || !db) return;
+
+            const text = document.getElementById("newCommentInput").value.trim();
+            if (!text) return;
+
+            db.collection("face2face_reklamfilm").doc(currentTaskId).update({
+                comments: firebase.firestore.FieldValue.arrayUnion({
+                    author: currentUser,
+                    text,
+                    created: new Date()
+                })
+            }).then(() => {
+                document.getElementById("newCommentInput").value = "";
+            }).catch((error) => {
+                console.error("Error adding comment:", error);
+                alert("Error adding comment");
+            });
+        }
+
+        // ===== MODALS =====
+        function openAddTaskModal() {
+            document.getElementById("taskTitleInput").value = "";
+            document.getElementById("taskCommentInput").value = "";
+            document.getElementById("addTaskModal").classList.add("active");
+            document.getElementById("taskTitleInput").focus();
+        }
+
+        function closeAddTaskModal() {
+            document.getElementById("addTaskModal").classList.remove("active");
+        }
+
+        function closeTaskDetail() {
+            document.getElementById("taskDetailModal").classList.remove("active");
+            currentTaskId = null;
+        }
+
+        // ===== UTILS =====
+        function escapeHtml(text) {
+            const div = document.createElement("div");
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function formatDate(date) {
+            if (!date) return "";
+            const now = new Date();
+            const diff = now - date;
+            const seconds = Math.floor(diff / 1000);
+            const minutes = Math.floor(seconds / 60);
+            const hours = Math.floor(minutes / 60);
+            const days = Math.floor(hours / 24);
+
+            if (seconds < 60) return "just now";
+            if (minutes < 60) return minutes + "m ago";
+            if (hours < 24) return hours + "h ago";
+            if (days < 7) return days + "d ago";
+
+            return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: date.getFullYear() !== now.getFullYear() ? "numeric" : undefined });
+        }
+
+        // ===== CLICK OUTSIDE MODAL =====
+        document.getElementById("addTaskModal").addEventListener("click", (e) => {
+            if (e.target.id === "addTaskModal") closeAddTaskModal();
+        });
+
+        document.getElementById("taskDetailModal").addEventListener("click", (e) => {
+            if (e.target.id === "taskDetailModal") closeTaskDetail();
+        });
+
+        // ===== INIT =====
+        window.addEventListener("load", checkAuth);
+    </script>
+</body>
+</html>
