@@ -520,7 +520,7 @@
             title, status: "todo", author: currentUser, created: new Date(), comments
         }).then(() => {
             closeAddModal();
-            notify("New task added: "" + title + """);
+            notify("New task added: " + title);
         });
     }
 
@@ -568,7 +568,7 @@
         db.collection(COLLECTION).doc(currentTaskId).update({ title: newTitle }).then(() => {
             document.getElementById("detailTitle").textContent = newTitle;
             cancelEditTitle();
-            notify("Task renamed to "" + newTitle + """);
+            notify("Task renamed to: " + newTitle);
         });
     }
 
@@ -583,7 +583,7 @@
             document.getElementById("commentInput").value = "";
             const updated = allTasks.find(t => t.id === currentTaskId);
             if (updated) renderComments(updated.comments || []);
-            notify("New comment on "" + (task ? task.title : "") + "": " + text.substring(0, 60));
+            notify("Comment on: " + (task ? task.title : "") + " - " + text.substring(0, 60));
         });
     }
 
