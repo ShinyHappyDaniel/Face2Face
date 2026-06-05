@@ -73,6 +73,35 @@
         .btn-logout { padding: 9px 16px; background: transparent; color: var(--muted); border: 1px solid var(--border); border-radius: 4px; font-family: 'Red Hat Mono', monospace; font-size: 12px; font-weight: 600; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s; }
         .btn-logout:hover { border-color: var(--pink); color: var(--pink); }
 
+        /* ===== FILM DAYS ===== */
+        .filmdays { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 6px; padding: 16px; margin-bottom: 20px; }
+        .filmdays-header { font-family: 'Red Hat Mono', monospace; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border); color: var(--pink); display: flex; justify-content: space-between; align-items: center; }
+        .filmdays-count { font-size: 11px; color: var(--muted); }
+        .filmdays-hint { font-family: 'Red Hat Mono', monospace; font-size: 10px; color: var(--muted); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .filmdays-list { display: flex; flex-wrap: wrap; gap: 8px; }
+        .filmday-pill { background: var(--bg-primary); border: 1px solid var(--border); border-left: 3px solid var(--pink); border-radius: 4px; padding: 10px 14px; font-family: 'Red Hat Text', sans-serif; font-size: 13px; display: flex; align-items: center; gap: 10px; transition: all 0.15s; }
+        .filmday-pill.selectable { cursor: pointer; }
+        .filmday-pill.selectable:hover { border-color: var(--pink); transform: translateY(-1px); }
+        .filmday-pill.selected { border-color: var(--done); border-left-color: var(--done); background: rgba(93,202,138,0.12); }
+        .filmday-pill.selected .filmday-date, .filmday-pill.selected .filmday-time { color: var(--done); }
+        .filmday-info { display: flex; flex-direction: column; gap: 2px; }
+        .filmday-date { font-weight: 600; color: var(--text); }
+        .filmday-weekday { font-family: 'Red Hat Mono', monospace; font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+        .filmday-time { font-family: 'Red Hat Mono', monospace; font-size: 11px; color: var(--pink); font-weight: 600; }
+        .filmday-selected-label { font-family: 'Red Hat Mono', monospace; font-size: 9px; background: var(--done); color: var(--bg-primary); padding: 2px 6px; border-radius: 2px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; }
+        .filmday-remove { background: transparent; border: none; color: var(--muted); cursor: pointer; font-size: 14px; padding: 0 2px; line-height: 1; transition: color 0.15s; }
+        .filmday-remove:hover { color: #f07070; }
+        .filmdays-empty { color: var(--muted); font-size: 12px; font-style: italic; padding: 4px 0; }
+        .filmdays-add { display: grid; grid-template-columns: 1.4fr 1fr 1fr auto; gap: 8px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
+        .filmdays-add input { padding: 9px 11px; background: var(--bg-primary); border: 1px solid var(--border); color: var(--text); border-radius: 4px; font-family: 'Red Hat Text', sans-serif; font-size: 13px; color-scheme: dark; }
+        .filmdays-add input:focus { outline: none; border-color: var(--pink); }
+        .filmdays-add button { padding: 9px 16px; background: var(--pink); color: var(--bg-primary); border: none; border-radius: 4px; font-family: 'Red Hat Mono', monospace; font-size: 12px; font-weight: 600; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s; white-space: nowrap; }
+        .filmdays-add button:hover { background: #ff9bc5; }
+        @media (max-width: 600px) {
+            .filmdays-add { grid-template-columns: 1fr 1fr; }
+            .filmdays-add button { grid-column: 1 / -1; }
+        }
+
         /* ===== SORT BAR ===== */
         .sort-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
         .sort-label { font-family: 'Red Hat Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); }
@@ -217,6 +246,22 @@
         </div>
     </div>
 
+    <!-- FILM DAYS -->
+    <div class="filmdays">
+        <div class="filmdays-header">
+            <span>Available Filming Slots</span>
+            <span class="filmdays-count" id="filmdaysCount"></span>
+        </div>
+        <div class="filmdays-hint" id="filmdaysHint"></div>
+        <div class="filmdays-list" id="filmdaysList"></div>
+        <div class="filmdays-add" id="filmdaysAdd" style="display:none;">
+            <input type="date" id="filmdayInput">
+            <input type="time" id="filmdayStart" value="09:00">
+            <input type="time" id="filmdayEnd" value="17:00">
+            <button onclick="addFilmDay()">+ Add Slot</button>
+        </div>
+    </div>
+
     <div class="sort-bar">
         <span class="sort-label">Sort:</span>
         <button class="sort-btn active" id="sort-newest" onclick="setSort('newest')">Newest first</button>
@@ -329,6 +374,7 @@
 
     const NTFY_TOPIC = "shp-face2face-reklamfilm2605";
     const COLLECTION = "face2face_reklamfilm";
+    const FILMDAYS_COLLECTION = COLLECTION + "_filmdays";
 
     let db;
     let currentRole = null;
@@ -337,6 +383,8 @@
     let currentSort = "newest";
     let allTasks = [];
     let tasksUnsub = null;
+    let filmdaysUnsub = null;
+    let allFilmdays = [];
     let adminPass = "shp2026";
     let clientPass = "face2face";
 
@@ -392,14 +440,20 @@
         if (currentRole === "admin") {
             document.getElementById("notifBtn").style.display = "inline-block";
             document.getElementById("ntfyTopicDisplay").textContent = NTFY_TOPIC;
+            document.getElementById("filmdaysAdd").style.display = "flex";
+        } else {
+            document.getElementById("filmdaysAdd").style.display = "none";
         }
         startListening();
+        startListeningFilmdays();
     }
 
     function logout() {
         sessionStorage.clear();
         if (tasksUnsub) tasksUnsub();
+        if (filmdaysUnsub) filmdaysUnsub();
         allTasks = [];
+        allFilmdays = [];
         currentRole = null;
         currentUser = null;
         document.getElementById("appScreen").style.display = "none";
@@ -420,6 +474,137 @@
             snap.forEach(doc => allTasks.push({ id: doc.id, ...doc.data() }));
             renderBoard();
         });
+    }
+
+    // ===== FILM DAYS =====
+    function startListeningFilmdays() {
+        if (!db) return;
+        filmdaysUnsub = db.collection(FILMDAYS_COLLECTION).onSnapshot((snap) => {
+            allFilmdays = [];
+            snap.forEach(doc => allFilmdays.push({ id: doc.id, ...doc.data() }));
+            renderFilmdays();
+        });
+    }
+
+    function addFilmDay() {
+        const dateEl = document.getElementById("filmdayInput");
+        const startEl = document.getElementById("filmdayStart");
+        const endEl = document.getElementById("filmdayEnd");
+        const date = dateEl.value;
+        const startTime = startEl.value;
+        const endTime = endEl.value;
+        if (!date) { alert("Pick a date"); return; }
+        if (!startTime || !endTime) { alert("Pick start and end time"); return; }
+        if (startTime >= endTime) { alert("End time must be after start time"); return; }
+        if (allFilmdays.some(d => d.date === date && d.startTime === startTime && d.endTime === endTime)) {
+            alert("That exact slot is already added"); return;
+        }
+        db.collection(FILMDAYS_COLLECTION).add({
+            date, startTime, endTime, selectedBy: null, selectedAt: null, created: new Date()
+        }).then(() => {
+            dateEl.value = "";
+            notify("New filming slot added: " + formatFilmslot({ date, startTime, endTime }));
+        });
+    }
+
+    function removeFilmDay(id) {
+        if (currentRole !== "admin") return;
+        const d = allFilmdays.find(x => x.id === id);
+        if (!confirm("Remove " + (d ? formatFilmslot(d) : "this slot") + "?")) return;
+        db.collection(FILMDAYS_COLLECTION).doc(id).delete();
+    }
+
+    function selectFilmDay(id) {
+        if (currentRole !== "client") return;
+        const slot = allFilmdays.find(x => x.id === id);
+        if (!slot) return;
+        const wasSelected = slot.selectedBy === currentUser;
+
+        const batch = db.batch();
+        allFilmdays.forEach(s => {
+            if (s.selectedBy === currentUser && s.id !== id) {
+                batch.update(db.collection(FILMDAYS_COLLECTION).doc(s.id), { selectedBy: null, selectedAt: null });
+            }
+        });
+        batch.update(db.collection(FILMDAYS_COLLECTION).doc(id), {
+            selectedBy: wasSelected ? null : currentUser,
+            selectedAt: wasSelected ? null : new Date()
+        });
+        batch.commit().then(() => {
+            if (wasSelected) {
+                notify("Client unselected slot: " + formatFilmslot(slot));
+            } else {
+                notify("Client selected filming slot: " + formatFilmslot(slot));
+            }
+        });
+    }
+
+    function renderFilmdays() {
+        const list = document.getElementById("filmdaysList");
+        const count = document.getElementById("filmdaysCount");
+        const hint = document.getElementById("filmdaysHint");
+        const sorted = [...allFilmdays].sort((a, b) => {
+            const cmp = a.date.localeCompare(b.date);
+            return cmp !== 0 ? cmp : (a.startTime || "").localeCompare(b.startTime || "");
+        });
+        count.textContent = sorted.length ? "(" + sorted.length + ")" : "";
+
+        const selected = sorted.find(s => s.selectedBy);
+        if (currentRole === "client") {
+            hint.textContent = selected
+                ? "Selected: " + formatFilmslot(selected) + " (click again to unselect)"
+                : "Click a slot to select your preferred filming time";
+        } else {
+            hint.textContent = selected
+                ? "Client selected: " + formatFilmslot(selected)
+                : "Add slots below. Client will see and select one.";
+        }
+
+        list.innerHTML = "";
+        if (sorted.length === 0) {
+            list.innerHTML = '<div class="filmdays-empty">No filming slots added yet</div>';
+            return;
+        }
+        sorted.forEach(d => {
+            const pill = document.createElement("div");
+            const isSelected = !!d.selectedBy;
+            const classes = ["filmday-pill"];
+            if (currentRole === "client") classes.push("selectable");
+            if (isSelected) classes.push("selected");
+            pill.className = classes.join(" ");
+
+            const dateObj = new Date(d.date + "T00:00:00");
+            const weekday = dateObj.toLocaleDateString("sv-SE", { weekday: "short" });
+            const dateStr = dateObj.toLocaleDateString("sv-SE", { day: "numeric", month: "short" });
+            const timeStr = (d.startTime || "") + "-" + (d.endTime || "");
+
+            const selectedBadge = isSelected ? `<span class="filmday-selected-label">Selected</span>` : "";
+            const removeBtn = currentRole === "admin"
+                ? `<button class="filmday-remove" title="Remove" onclick="event.stopPropagation(); removeFilmDay('${d.id}')">×</button>`
+                : "";
+
+            pill.innerHTML = `
+                <div class="filmday-info">
+                    <span class="filmday-weekday">${weekday}</span>
+                    <span class="filmday-date">${dateStr}</span>
+                </div>
+                <span class="filmday-time">${timeStr}</span>
+                ${selectedBadge}
+                ${removeBtn}`;
+
+            if (currentRole === "client") {
+                pill.onclick = () => selectFilmDay(d.id);
+            }
+            list.appendChild(pill);
+        });
+    }
+
+    function formatFilmslot(d) {
+        if (!d || !d.date) return "";
+        const dateObj = new Date(d.date + "T00:00:00");
+        const dateStr = dateObj.toLocaleDateString("sv-SE", { weekday: "short", day: "numeric", month: "short" });
+        const timeStr = d.startTime && d.endTime ? " " + d.startTime + "-" + d.endTime : "";
+        return dateStr + timeStr;
     }
 
     // ===== SORT =====
