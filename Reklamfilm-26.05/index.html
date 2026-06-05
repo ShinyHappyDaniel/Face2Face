@@ -92,10 +92,14 @@
         .filmday-remove { background: transparent; border: none; color: var(--muted); cursor: pointer; font-size: 14px; padding: 0 2px; line-height: 1; transition: color 0.15s; }
         .filmday-remove:hover { color: #f07070; }
         .filmdays-empty { color: var(--muted); font-size: 12px; font-style: italic; padding: 4px 0; }
-        .filmdays-add { display: grid; grid-template-columns: 1.4fr 1fr 1fr auto; gap: 8px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
-        .filmdays-add input { padding: 9px 11px; background: var(--bg-primary); border: 1px solid var(--border); color: var(--text); border-radius: 4px; font-family: 'Red Hat Text', sans-serif; font-size: 13px; color-scheme: dark; }
+        .filmdays-add { display: grid; grid-template-columns: 1.4fr 1fr 1fr auto; gap: 10px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); align-items: end; }
+        .filmdays-field { display: flex; flex-direction: column; gap: 4px; }
+        .filmdays-field label { font-family: 'Red Hat Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); }
+        .filmdays-add input { padding: 9px 11px; background: var(--bg-primary); border: 1px solid var(--border); color: var(--text); border-radius: 4px; font-family: 'Red Hat Text', sans-serif; font-size: 13px; color-scheme: dark; cursor: pointer; width: 100%; }
         .filmdays-add input:focus { outline: none; border-color: var(--pink); }
-        .filmdays-add button { padding: 9px 16px; background: var(--pink); color: var(--bg-primary); border: none; border-radius: 4px; font-family: 'Red Hat Mono', monospace; font-size: 12px; font-weight: 600; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s; white-space: nowrap; }
+        .filmdays-add input::-webkit-calendar-picker-indicator { filter: invert(0.7) sepia(0.5) hue-rotate(290deg) saturate(3); cursor: pointer; opacity: 0.9; }
+        .filmdays-add input::-webkit-calendar-picker-indicator:hover { opacity: 1; }
+        .filmdays-add button { padding: 9px 16px; background: var(--pink); color: var(--bg-primary); border: none; border-radius: 4px; font-family: 'Red Hat Mono', monospace; font-size: 12px; font-weight: 600; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s; white-space: nowrap; height: 38px; }
         .filmdays-add button:hover { background: #ff9bc5; }
         @media (max-width: 600px) {
             .filmdays-add { grid-template-columns: 1fr 1fr; }
@@ -255,9 +259,18 @@
         <div class="filmdays-hint" id="filmdaysHint"></div>
         <div class="filmdays-list" id="filmdaysList"></div>
         <div class="filmdays-add" id="filmdaysAdd" style="display:none;">
-            <input type="date" id="filmdayInput">
-            <input type="time" id="filmdayStart" value="09:00">
-            <input type="time" id="filmdayEnd" value="17:00">
+            <div class="filmdays-field">
+                <label for="filmdayInput">Date</label>
+                <input type="date" id="filmdayInput" onclick="this.showPicker && this.showPicker()">
+            </div>
+            <div class="filmdays-field">
+                <label for="filmdayStart">From</label>
+                <input type="time" id="filmdayStart" value="09:00" onclick="this.showPicker && this.showPicker()">
+            </div>
+            <div class="filmdays-field">
+                <label for="filmdayEnd">To</label>
+                <input type="time" id="filmdayEnd" value="17:00" onclick="this.showPicker && this.showPicker()">
+            </div>
             <button onclick="addFilmDay()">+ Add Slot</button>
         </div>
     </div>
