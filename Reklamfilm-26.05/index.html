@@ -118,6 +118,11 @@
             .filmdays-add button { grid-column: 1 / -1; }
         }
 
+        /* ===== DB ERROR BANNER ===== */
+        .db-error { background: rgba(240,112,112,0.1); border: 1px solid rgba(240,112,112,0.4); border-left: 3px solid #f07070; border-radius: 4px; padding: 14px 16px; margin-bottom: 20px; font-size: 13px; line-height: 1.6; }
+        .db-error h4 { font-family: 'Red Hat Mono', monospace; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #f07070; margin-bottom: 6px; }
+        .db-error p { color: var(--muted); }
+
         /* ===== TABS ===== */
         .tabs { display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 1px solid var(--border); }
         .tab-btn { padding: 10px 18px; background: transparent; border: none; border-bottom: 2px solid transparent; color: var(--muted); font-family: 'Red Hat Mono', monospace; font-size: 12px; font-weight: 600; cursor: pointer; text-transform: uppercase; letter-spacing: 1.5px; transition: all 0.2s; margin-bottom: -1px; }
@@ -298,6 +303,12 @@
             <button id="notifBtn" class="btn-logout" onclick="showNtfyInfo()" style="display:none;">Notifications</button>
             <button class="btn-logout" onclick="logout()">Logout</button>
         </div>
+    </div>
+
+    <!-- DB ERROR -->
+    <div class="db-error" id="dbError" style="display:none;">
+        <h4 id="dbErrorTitle">Database unreachable</h4>
+        <p id="dbErrorText"></p>
     </div>
 
     <!-- TABS -->
@@ -620,8 +631,33 @@
         tasksUnsub = db.collection(COLLECTION).onSnapshot((snap) => {
             allTasks = [];
             snap.forEach(doc => allTasks.push({ id: doc.id, ...doc.data() }));
+            hideDbError();
             renderBoard();
-        });
+        }, err => showDbError(err));
+    }
+
+    // ===== DB ERROR BANNER =====
+    function showDbError(err) {
+        const box = document.getElementById("dbError");
+        const text = document.getElementById("dbErrorText");
+        if (!box) return;
+        if (err && err.code === "permission-denied") {
+            document.getElementById("dbErrorTitle").textContent = "Database locked";
+            text.innerHTML = "Firestore is refusing reads and writes, so nothing on this board can load or save. "
+                + "The security rules for project <strong>face2face-4f5bf</strong> need to be republished. "
+                + "Until then, anything you type here is lost.";
+        } else {
+            document.getElementById("dbErrorTitle").textContent = "Database unreachable";
+            text.textContent = "Could not reach Firestore" + (err && err.message ? ": " + err.message : ".")
+                + " Check your connection and reload.";
+        }
+        box.style.display = "block";
+        console.error("Firestore error:", err);
+    }
+
+    function hideDbError() {
+        const box = document.getElementById("dbError");
+        if (box) box.style.display = "none";
     }
 
     // ===== FILM DAYS =====
@@ -631,7 +667,7 @@
             allFilmdays = [];
             snap.forEach(doc => allFilmdays.push({ id: doc.id, ...doc.data() }));
             renderFilmdays();
-        });
+        }, err => showDbError(err));
     }
 
     function addFilmDay() {
@@ -824,7 +860,7 @@ Ansök här`
             });
             if (!hasSeedDoc && !seedAttempted) { seedScripts(); return; }
             renderScripts();
-        });
+        }, err => showDbError(err));
     }
 
     function seedScripts() {
@@ -843,7 +879,7 @@ Ansök här`
             });
         });
         batch.set(db.collection(SCRIPTS_COLLECTION).doc(SEED_DOC), { seeded: true, created: new Date() });
-        batch.commit().catch(e => { console.error("Seed failed:", e); renderScripts(); });
+        batch.commit().catch(e => { showDbError(e); renderScripts(); });
     }
 
     function sortedScripts() {
