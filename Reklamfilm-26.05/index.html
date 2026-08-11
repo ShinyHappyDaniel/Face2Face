@@ -27,30 +27,6 @@
 
         body { background: var(--bg-primary); color: var(--text); font-family: 'Red Hat Text', sans-serif; font-size: 14px; line-height: 1.5; }
 
-        /* ===== LOGIN ===== */
-        .login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; }
-        .login-card { background: var(--bg-secondary); border: 1px solid var(--border); padding: 40px 30px; border-radius: 8px; text-align: center; max-width: 400px; width: 90%; }
-        .login-logo { margin-bottom: 24px; }
-        .login-logo img { height: 18px; opacity: 0.9; }
-        .login-card h1 { font-family: 'Red Hat Mono', monospace; font-size: 26px; font-weight: 300; margin-bottom: 8px; letter-spacing: 3px; text-transform: uppercase; }
-        .login-card p { color: var(--muted); margin-bottom: 28px; font-size: 13px; }
-        .login-error { color: #f07070; font-size: 12px; margin-bottom: 10px; min-height: 18px; }
-        .login-buttons { display: flex; flex-direction: column; gap: 12px; }
-        .btn-login { padding: 12px 20px; border: none; border-radius: 6px; font-family: 'Red Hat Mono', monospace; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 1px; }
-        .btn-admin { background: var(--header-bg); color: var(--text); }
-        .btn-admin:hover { background: var(--pink); color: var(--bg-primary); }
-        .btn-client { background: transparent; border: 2px solid var(--header-bg); color: #c07090; }
-        .btn-client:hover { background: var(--header-bg); color: var(--text); }
-        .login-step2 { display: none; }
-        .login-step2.active { display: block; }
-        .login-role-label { font-family: 'Red Hat Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--pink); margin-bottom: 14px; }
-        .pw-input { width: 100%; padding: 10px 12px; background: var(--bg-primary); border: 1px solid var(--border); color: var(--text); border-radius: 4px; font-family: 'Red Hat Text', sans-serif; font-size: 14px; margin-bottom: 12px; text-align: center; letter-spacing: 2px; }
-        .pw-input:focus { outline: none; border-color: var(--pink); }
-        .btn-submit-login { width: 100%; padding: 11px; background: var(--pink); color: var(--bg-primary); border: none; border-radius: 4px; font-family: 'Red Hat Mono', monospace; font-size: 13px; font-weight: 600; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; transition: all 0.2s; }
-        .btn-submit-login:hover { background: #ff9bc5; }
-        .btn-back-login { background: none; border: none; color: var(--muted); font-size: 12px; cursor: pointer; font-family: 'Red Hat Text', sans-serif; text-decoration: underline; }
-        .btn-back-login:hover { color: var(--pink); }
-
         /* ===== STATUS PILLS ON CARD ===== */
         .card-status-pills { display: flex; gap: 5px; margin-top: 10px; flex-wrap: wrap; }
         .status-pill { padding: 3px 9px; border-radius: 20px; border: 1px solid var(--border); background: transparent; font-family: 'Red Hat Mono', monospace; font-size: 10px; font-weight: 600; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); transition: all 0.15s; }
@@ -264,44 +240,18 @@
 </head>
 <body>
 
-<!-- LOGIN -->
-<div id="loginScreen" class="login-screen">
-    <div class="login-card">
-        <div class="login-logo"><img src="./logo.png" alt="Shiny Happy People"></div>
-        <h1>Face2Face</h1>
-        <p>Reklamfilm 26.05</p>
-        <div id="loginError" class="login-error"></div>
-
-        <div id="loginStep1">
-            <div class="login-buttons">
-                <button class="btn-login btn-admin" onclick="selectRole('admin')">Admin Login</button>
-                <button class="btn-login btn-client" onclick="selectRole('client')">Client Login</button>
-            </div>
-        </div>
-
-        <div id="loginStep2" class="login-step2">
-            <div class="login-role-label" id="loginRoleLabel"></div>
-            <input type="password" id="pwInput" class="pw-input" placeholder="Password">
-            <button class="btn-submit-login" onclick="submitLogin()">Log in</button>
-            <button class="btn-back-login" onclick="backToStep1()">← Back</button>
-        </div>
-    </div>
-</div>
-
 <!-- APP -->
-<div id="appScreen" class="app" style="display:none;">
+<div id="appScreen" class="app">
     <div class="header">
         <div class="header-top">
             <div class="header-logo"><img src="./logo.png" alt="Shiny Happy People"></div>
-            <div class="header-user" id="userRoleLabel">ADMIN</div>
         </div>
         <div class="header-main">Face2Face</div>
         <div class="header-sub">Reklamfilm 26.05</div>
         <div class="header-actions">
             <button class="btn-add" id="btnAddTask" onclick="openAddModal()">+ Add Task</button>
             <button class="btn-add" id="btnAddScript" onclick="openAddScriptModal()" style="display:none;">+ Add Script</button>
-            <button id="notifBtn" class="btn-logout" onclick="showNtfyInfo()" style="display:none;">Notifications</button>
-            <button class="btn-logout" onclick="logout()">Logout</button>
+            <button class="btn-logout" onclick="showNtfyInfo()">Notifications</button>
         </div>
     </div>
 
@@ -328,7 +278,7 @@
         </div>
         <div class="filmdays-hint" id="filmdaysHint"></div>
         <div class="filmdays-list" id="filmdaysList"></div>
-        <div class="filmdays-add" id="filmdaysAdd" style="display:none;">
+        <div class="filmdays-add" id="filmdaysAdd">
             <div class="filmdays-field">
                 <label for="filmdayInput">Date</label>
                 <input type="text" id="filmdayInput" placeholder="Pick date" readonly>
@@ -490,8 +440,7 @@
     const SEED_DOC = "__seeded";
 
     let db;
-    let currentRole = null;
-    let currentUser = null;
+    const currentUser = "Anonymous";
     let currentTaskId = null;
     let currentSort = "newest";
     let allTasks = [];
@@ -509,8 +458,6 @@
     let datePickerInstance = null;
     let startPickerInstance = null;
     let endPickerInstance = null;
-    let adminPass = "shp2026";
-    let clientPass = "face2face";
 
     try {
         firebase.initializeApp(firebaseConfig);
@@ -519,56 +466,10 @@
         console.error("Firebase init failed:", e);
     }
 
-    // ===== AUTH =====
-    let pendingRole = null;
-
-    function selectRole(role) {
-        pendingRole = role;
-        document.getElementById("loginStep1").style.display = "none";
-        document.getElementById("loginStep2").classList.add("active");
-        document.getElementById("loginRoleLabel").textContent = role.toUpperCase() + " — enter password";
-        document.getElementById("pwInput").value = "";
-        document.getElementById("loginError").textContent = "";
-        setTimeout(() => document.getElementById("pwInput").focus(), 50);
-    }
-
-    function backToStep1() {
-        pendingRole = null;
-        document.getElementById("loginStep1").style.display = "block";
-        document.getElementById("loginStep2").classList.remove("active");
-        document.getElementById("loginError").textContent = "";
-    }
-
-    function submitLogin() {
-        const pw = document.getElementById("pwInput").value;
-        const correct = pendingRole === "admin" ? adminPass : clientPass;
-        if (pw === correct) {
-            currentRole = pendingRole;
-            currentUser = pendingRole === "admin" ? "SHP" : "Client";
-            sessionStorage.setItem("role", currentRole);
-            sessionStorage.setItem("user", currentUser);
-            enterApp();
-        } else {
-            const el = document.getElementById("loginError");
-            el.textContent = "Incorrect password";
-            document.getElementById("pwInput").value = "";
-            document.getElementById("pwInput").focus();
-            setTimeout(() => { el.textContent = ""; }, 3000);
-        }
-    }
-
+    // ===== START =====
     function enterApp() {
-        document.getElementById("loginScreen").style.display = "none";
-        document.getElementById("appScreen").style.display = "block";
-        document.getElementById("userRoleLabel").textContent = currentRole.toUpperCase();
-        if (currentRole === "admin") {
-            document.getElementById("notifBtn").style.display = "inline-block";
-            document.getElementById("ntfyTopicDisplay").textContent = NTFY_TOPIC;
-            document.getElementById("filmdaysAdd").style.display = "grid";
-            initFilmdayPickers();
-        } else {
-            document.getElementById("filmdaysAdd").style.display = "none";
-        }
+        document.getElementById("ntfyTopicDisplay").textContent = NTFY_TOPIC;
+        initFilmdayPickers();
         startListening();
         startListeningFilmdays();
         startListeningScripts();
@@ -597,32 +498,6 @@
             defaultDate: "17:00", minuteIncrement: 15,
             disableMobile: true
         });
-    }
-
-    function logout() {
-        sessionStorage.clear();
-        if (tasksUnsub) tasksUnsub();
-        if (filmdaysUnsub) filmdaysUnsub();
-        if (scriptsUnsub) scriptsUnsub();
-        allTasks = [];
-        allFilmdays = [];
-        allScripts = [];
-        editingScriptId = null;
-        editingCardEl = null;
-        openScriptComments = new Set();
-        scriptCommentDrafts = {};
-        seedAttempted = false;
-        currentTab = "tasks";
-        currentRole = null;
-        currentUser = null;
-        document.getElementById("appScreen").style.display = "none";
-        document.getElementById("loginScreen").style.display = "flex";
-    }
-
-    function checkSession() {
-        const role = sessionStorage.getItem("role");
-        const user = sessionStorage.getItem("user");
-        if (role && user) { currentRole = role; currentUser = user; enterApp(); }
     }
 
     // ===== FIRESTORE =====
@@ -692,21 +567,19 @@
     }
 
     function removeFilmDay(id) {
-        if (currentRole !== "admin") return;
         const d = allFilmdays.find(x => x.id === id);
         if (!confirm("Remove " + (d ? formatFilmslot(d) : "this slot") + "?")) return;
         db.collection(FILMDAYS_COLLECTION).doc(id).delete();
     }
 
     function selectFilmDay(id) {
-        if (currentRole !== "client") return;
         const slot = allFilmdays.find(x => x.id === id);
         if (!slot) return;
-        const wasSelected = slot.selectedBy === currentUser;
+        const wasSelected = !!slot.selectedBy;
 
         const batch = db.batch();
         allFilmdays.forEach(s => {
-            if (s.selectedBy === currentUser && s.id !== id) {
+            if (s.selectedBy && s.id !== id) {
                 batch.update(db.collection(FILMDAYS_COLLECTION).doc(s.id), { selectedBy: null, selectedAt: null });
             }
         });
@@ -715,11 +588,7 @@
             selectedAt: wasSelected ? null : new Date()
         });
         batch.commit().then(() => {
-            if (wasSelected) {
-                notify("Client unselected slot: " + formatFilmslot(slot));
-            } else {
-                notify("Client selected filming slot: " + formatFilmslot(slot));
-            }
+            notify((wasSelected ? "Filming slot unselected: " : "Filming slot selected: ") + formatFilmslot(slot));
         });
     }
 
@@ -734,15 +603,9 @@
         count.textContent = sorted.length ? "(" + sorted.length + ")" : "";
 
         const selected = sorted.find(s => s.selectedBy);
-        if (currentRole === "client") {
-            hint.textContent = selected
-                ? "Selected: " + formatFilmslot(selected) + " (click again to unselect)"
-                : "Click a slot to select your preferred filming time";
-        } else {
-            hint.textContent = selected
-                ? "Client selected: " + formatFilmslot(selected)
-                : "Add slots below. Client will see and select one.";
-        }
+        hint.textContent = selected
+            ? "Selected: " + formatFilmslot(selected) + " (click again to unselect)"
+            : "Add slots below, then click one to pick the filming time";
 
         list.innerHTML = "";
         if (sorted.length === 0) {
@@ -752,8 +615,7 @@
         sorted.forEach(d => {
             const pill = document.createElement("div");
             const isSelected = !!d.selectedBy;
-            const classes = ["filmday-pill"];
-            if (currentRole === "client") classes.push("selectable");
+            const classes = ["filmday-pill", "selectable"];
             if (isSelected) classes.push("selected");
             pill.className = classes.join(" ");
 
@@ -763,9 +625,7 @@
             const timeStr = (d.startTime || "") + "-" + (d.endTime || "");
 
             const selectedBadge = isSelected ? `<span class="filmday-selected-label">Selected</span>` : "";
-            const removeBtn = currentRole === "admin"
-                ? `<button class="filmday-remove" title="Remove" onclick="event.stopPropagation(); removeFilmDay('${d.id}')">×</button>`
-                : "";
+            const removeBtn = `<button class="filmday-remove" title="Remove" onclick="event.stopPropagation(); removeFilmDay('${d.id}')">×</button>`;
 
             pill.innerHTML = `
                 <div class="filmday-info">
@@ -776,9 +636,7 @@
                 ${selectedBadge}
                 ${removeBtn}`;
 
-            if (currentRole === "client") {
-                pill.onclick = () => selectFilmDay(d.id);
-            }
+            pill.onclick = () => selectFilmDay(d.id);
             list.appendChild(pill);
         });
     }
@@ -874,7 +732,6 @@ Ansök här`
                 order: i + 1,
                 comments: [],
                 created: new Date(),
-                lastEditedBy: null,
                 lastEditedAt: null
             });
         });
@@ -931,8 +788,8 @@ Ansök här`
         ).join("");
 
         const n = (s.comments || []).length;
-        const edited = s.lastEditedBy
-            ? "Edited by " + esc(s.lastEditedBy) + " · " + absDate(new Date(toMs(s.lastEditedAt)))
+        const edited = s.lastEditedAt
+            ? "Edited " + absDate(new Date(toMs(s.lastEditedAt)))
             : "Not edited yet";
         const isOpen = openScriptComments.has(s.id);
 
@@ -1040,7 +897,7 @@ Ansök här`
         const text = card.querySelector("#editScriptText-" + id).value;
         if (!title) { alert("Title is required"); return; }
         db.collection(SCRIPTS_COLLECTION).doc(id).update({
-            title, text, lastEditedBy: currentUser, lastEditedAt: new Date()
+            title, text, lastEditedAt: new Date()
         }).then(() => {
             editingScriptId = null;
             editingCardEl = null;
@@ -1062,7 +919,7 @@ Ansök här`
         const maxOrder = allScripts.reduce((m, s) => Math.max(m, s.order != null ? s.order : 0), 0);
         db.collection(SCRIPTS_COLLECTION).add({
             title, text, status: "draft", order: maxOrder + 1, comments: [],
-            created: new Date(), lastEditedBy: currentUser, lastEditedAt: new Date()
+            created: new Date(), lastEditedAt: new Date()
         }).then(() => {
             closeAddScriptModal();
             notify("New script added: " + title);
@@ -1143,12 +1000,9 @@ Ansök här`
         const n = (task.comments || []).length;
         const dateStr = relativeDate(toMs(task.created));
 
-        let adminBtns = "";
-        if (currentRole === "admin") {
-            adminBtns = `
-                <button class="card-btn card-btn-edit" title="Edit" onclick="event.stopPropagation(); openDetailForEdit('${task.id}')">✎</button>
-                <button class="card-btn card-btn-delete" title="Delete" onclick="event.stopPropagation(); deleteTask('${task.id}')">✕</button>`;
-        }
+        const adminBtns = `
+            <button class="card-btn card-btn-edit" title="Edit" onclick="event.stopPropagation(); openDetailForEdit('${task.id}')">✎</button>
+            <button class="card-btn card-btn-delete" title="Delete" onclick="event.stopPropagation(); deleteTask('${task.id}')">✕</button>`;
 
         const statuses = [
             { val: "todo", label: "To Do" },
@@ -1190,7 +1044,6 @@ Ansök här`
     }
 
     function deleteTask(id) {
-        if (currentRole !== "admin") return;
         if (!confirm("Delete this task?")) return;
         db.collection(COLLECTION).doc(id).delete().then(() => closeDetail());
     }
@@ -1306,7 +1159,6 @@ Ansök här`
 
     // ===== NTFY NOTIFICATIONS =====
     function notify(message) {
-        if (currentRole !== "client") return;
         fetch("https://ntfy.sh/" + NTFY_TOPIC, {
             method: "POST",
             body: message,
@@ -1349,8 +1201,6 @@ Ansök här`
         });
     });
 
-    // Keyboard: Enter in password input submits
-    document.getElementById("pwInput").addEventListener("keydown", e => { if (e.key === "Enter") submitLogin(); });
     // Keyboard: Enter in title input submits
     document.getElementById("newTitle").addEventListener("keydown", e => { if (e.key === "Enter") createTask(); });
     document.getElementById("editTitleInput").addEventListener("keydown", e => {
@@ -1358,7 +1208,7 @@ Ansök här`
         if (e.key === "Escape") cancelEditTitle();
     });
 
-    window.addEventListener("load", checkSession);
+    window.addEventListener("load", enterApp);
 </script>
 </body>
 </html>
