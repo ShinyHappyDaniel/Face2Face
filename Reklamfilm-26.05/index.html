@@ -100,11 +100,11 @@
         .db-error p { color: var(--muted); }
 
         /* ===== TABS ===== */
-        .tabs { display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 1px solid var(--border); }
-        .tab-btn { padding: 10px 18px; background: transparent; border: none; border-bottom: 2px solid transparent; color: var(--muted); font-family: 'Red Hat Mono', monospace; font-size: 12px; font-weight: 600; cursor: pointer; text-transform: uppercase; letter-spacing: 1.5px; transition: all 0.2s; margin-bottom: -1px; }
-        .tab-btn:hover { color: var(--pink); }
-        .tab-btn.active { color: var(--pink); border-bottom-color: var(--pink); }
-        .tab-badge { font-size: 10px; opacity: 0.7; margin-left: 5px; }
+        .tabs { display: flex; gap: 8px; margin-bottom: 22px; }
+        .tab-btn { padding: 12px 26px; background: transparent; border: 1px solid var(--border); border-radius: 5px; color: var(--text); font-family: 'Red Hat Mono', monospace; font-size: 13px; font-weight: 600; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; transition: all 0.2s; }
+        .tab-btn:hover { border-color: var(--pink); }
+        .tab-btn.active { background: var(--pink); border-color: var(--pink); color: #000000; }
+        .tab-badge { font-size: 11px; opacity: 0.65; margin-left: 6px; }
         .view { display: none; }
         .view.active { display: block; }
 
@@ -219,13 +219,6 @@
         .add-comment-button:hover { background: var(--pink); color: var(--bg-primary); }
         .no-comments { font-size: 12px; color: var(--muted); text-align: center; padding: 16px; }
 
-        /* ===== NOTIFICATION SETUP ===== */
-        .ntfy-setup { background: rgba(253,137,179,0.08); border: 1px solid rgba(253,137,179,0.2); border-radius: 4px; padding: 14px; margin-top: 20px; font-size: 12px; }
-        .ntfy-setup h4 { font-family: 'Red Hat Mono', monospace; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--pink); margin-bottom: 6px; }
-        .ntfy-setup p { color: var(--muted); line-height: 1.6; }
-        .ntfy-setup a { color: var(--pink); }
-        .ntfy-topic { font-family: 'Red Hat Mono', monospace; background: var(--bg-primary); padding: 4px 8px; border-radius: 3px; color: var(--text); font-size: 11px; display: inline-block; margin-top: 6px; }
-
         @media (max-width: 900px) {
             .board { grid-template-columns: 1fr; }
             .header-main { font-size: 22px; }
@@ -251,7 +244,6 @@
         <div class="header-actions">
             <button class="btn-add" id="btnAddTask" onclick="openAddModal()">+ Add Task</button>
             <button class="btn-add" id="btnAddScript" onclick="openAddScriptModal()" style="display:none;">+ Add Script</button>
-            <button class="btn-logout" onclick="showNtfyInfo()">Notifications</button>
         </div>
     </div>
 
@@ -403,20 +395,6 @@
     </div>
 </div>
 
-<!-- NTFY INFO MODAL -->
-<div id="ntfyModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">Notifications <button class="modal-close" onclick="document.getElementById('ntfyModal').classList.remove('active')">×</button></div>
-        <div style="font-size:13px; color: var(--muted); line-height: 1.7;">
-            <p style="margin-bottom:12px;">You get a push notification every time the client makes a change.</p>
-            <p style="margin-bottom:12px;"><strong style="color:var(--text);">1.</strong> Install the free <a href="https://ntfy.sh" target="_blank" style="color:var(--pink);">ntfy app</a> on your phone (iOS or Android).</p>
-            <p style="margin-bottom:12px;"><strong style="color:var(--text);">2.</strong> Subscribe to this topic:</p>
-            <div class="ntfy-topic" id="ntfyTopicDisplay"></div>
-            <p style="margin-top:12px;"><strong style="color:var(--text);">3.</strong> Done. Any client action will ping you immediately.</p>
-        </div>
-    </div>
-</div>
-
 <!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
@@ -433,7 +411,6 @@
         measurementId: "G-Y9RPZPT7DQ"
     };
 
-    const NTFY_TOPIC = "shp-face2face-reklamfilm2605";
     const COLLECTION = "face2face_reklamfilm";
     const FILMDAYS_COLLECTION = COLLECTION + "_filmdays";
     const SCRIPTS_COLLECTION = COLLECTION + "_scripts";
@@ -468,7 +445,6 @@
 
     // ===== START =====
     function enterApp() {
-        document.getElementById("ntfyTopicDisplay").textContent = NTFY_TOPIC;
         initFilmdayPickers();
         startListening();
         startListeningFilmdays();
@@ -562,7 +538,6 @@
             date, startTime, endTime, selectedBy: null, selectedAt: null, created: new Date()
         }).then(() => {
             if (datePickerInstance) datePickerInstance.clear();
-            notify("New filming slot added: " + formatFilmslot({ date, startTime, endTime }));
         });
     }
 
@@ -587,9 +562,7 @@
             selectedBy: wasSelected ? null : currentUser,
             selectedAt: wasSelected ? null : new Date()
         });
-        batch.commit().then(() => {
-            notify((wasSelected ? "Filming slot unselected: " : "Filming slot selected: ") + formatFilmslot(slot));
-        });
+        batch.commit();
     }
 
     function renderFilmdays() {
@@ -851,22 +824,18 @@ Ansök här`
         const input = document.getElementById("scriptCommentInput-" + id);
         const text = input.value.trim();
         if (!text) return;
-        const s = allScripts.find(x => x.id === id);
         db.collection(SCRIPTS_COLLECTION).doc(id).update({
             comments: firebase.firestore.FieldValue.arrayUnion({ author: currentUser, text, created: new Date() })
         }).then(() => {
             input.value = "";
             delete scriptCommentDrafts[id];
-            notify("Comment on " + (s ? s.title : "script") + ": " + text.substring(0, 60));
         });
     }
 
     function setScriptStatus(id, status) {
         const s = allScripts.find(x => x.id === id);
         if (!s || (s.status || "draft") === status) return;
-        db.collection(SCRIPTS_COLLECTION).doc(id).update({ status }).then(() => {
-            notify((s.title || "Script") + " marked as \"" + status + "\"");
-        });
+        db.collection(SCRIPTS_COLLECTION).doc(id).update({ status });
     }
 
     function startEditScript(id) {
@@ -902,7 +871,6 @@ Ansök här`
             editingScriptId = null;
             editingCardEl = null;
             renderScripts();
-            notify(title + " was edited");
         });
     }
 
@@ -922,7 +890,6 @@ Ansök här`
             created: new Date(), lastEditedAt: new Date()
         }).then(() => {
             closeAddScriptModal();
-            notify("New script added: " + title);
         });
     }
 
@@ -930,9 +897,7 @@ Ansök här`
         const s = allScripts.find(x => x.id === id);
         if (!confirm("Delete " + (s ? s.title : "this script") + "?")) return;
         if (editingScriptId === id) { editingScriptId = null; editingCardEl = null; }
-        db.collection(SCRIPTS_COLLECTION).doc(id).delete().then(() => {
-            notify("Script deleted: " + (s ? s.title : ""));
-        });
+        db.collection(SCRIPTS_COLLECTION).doc(id).delete();
     }
 
     function openAddScriptModal() {
@@ -1039,7 +1004,6 @@ Ansök här`
             title, status: "todo", author: currentUser, created: new Date(), comments
         }).then(() => {
             closeAddModal();
-            notify("New task added: " + title);
         });
     }
 
@@ -1051,18 +1015,13 @@ Ansök här`
     function updateStatus() {
         if (!currentTaskId) return;
         const newStatus = document.getElementById("statusSelect").value;
-        const task = allTasks.find(t => t.id === currentTaskId);
-        db.collection(COLLECTION).doc(currentTaskId).update({ status: newStatus }).then(() => {
-            notify("Status changed to \"" + newStatus + "\" on \"" + (task ? task.title : "") + "\"");
-        });
+        db.collection(COLLECTION).doc(currentTaskId).update({ status: newStatus });
     }
 
     function quickStatus(taskId, newStatus) {
         const task = allTasks.find(t => t.id === taskId);
         if (!task || task.status === newStatus) return;
-        db.collection(COLLECTION).doc(taskId).update({ status: newStatus }).then(() => {
-            notify("Status changed to \"" + newStatus + "\" on \"" + (task ? task.title : "") + "\"");
-        });
+        db.collection(COLLECTION).doc(taskId).update({ status: newStatus });
     }
 
     // ===== EDIT TITLE =====
@@ -1086,7 +1045,6 @@ Ansök här`
         db.collection(COLLECTION).doc(currentTaskId).update({ title: newTitle }).then(() => {
             document.getElementById("detailTitle").textContent = newTitle;
             cancelEditTitle();
-            notify("Task renamed to: " + newTitle);
         });
     }
 
@@ -1094,14 +1052,12 @@ Ansök här`
     function postComment() {
         const text = document.getElementById("commentInput").value.trim();
         if (!text || !currentTaskId) return;
-        const task = allTasks.find(t => t.id === currentTaskId);
         db.collection(COLLECTION).doc(currentTaskId).update({
             comments: firebase.firestore.FieldValue.arrayUnion({ author: currentUser, text, created: new Date() })
         }).then(() => {
             document.getElementById("commentInput").value = "";
             const updated = allTasks.find(t => t.id === currentTaskId);
             if (updated) renderComments(updated.comments || []);
-            notify("Comment on: " + (task ? task.title : "") + " - " + text.substring(0, 60));
         });
     }
 
@@ -1157,17 +1113,6 @@ Ansök här`
     }
     function closeAddModal() { document.getElementById("addModal").classList.remove("active"); }
 
-    // ===== NTFY NOTIFICATIONS =====
-    function notify(message) {
-        fetch("https://ntfy.sh/" + NTFY_TOPIC, {
-            method: "POST",
-            body: message,
-            headers: { "Title": "Face2Face Update", "Tags": "clipboard" }
-        }).catch(() => {});
-    }
-
-    function showNtfyInfo() { document.getElementById("ntfyModal").classList.add("active"); }
-
     // ===== UTILS =====
     function esc(str) {
         if (!str) return "";
@@ -1195,7 +1140,7 @@ Ansök här`
     }
 
     // ===== CLOSE ON BACKDROP =====
-    ["addModal", "detailModal", "ntfyModal", "addScriptModal"].forEach(id => {
+    ["addModal", "detailModal", "addScriptModal"].forEach(id => {
         document.getElementById(id).addEventListener("click", e => {
             if (e.target.id === id) document.getElementById(id).classList.remove("active");
         });
