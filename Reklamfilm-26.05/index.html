@@ -59,6 +59,10 @@
         .status-pill.active-inprogress { border-color: var(--inprogress); color: var(--inprogress); background: rgba(253,137,179,0.12); }
         .status-pill.active-done { border-color: var(--done); color: var(--done); background: rgba(93,202,138,0.12); }
 
+        .status-pill.active-draft { border-color: var(--todo); color: var(--todo); background: rgba(111,110,110,0.12); }
+        .status-pill.active-review { border-color: var(--inprogress); color: var(--inprogress); background: rgba(253,137,179,0.12); }
+        .status-pill.active-approved { border-color: var(--done); color: var(--done); background: rgba(93,202,138,0.12); }
+
         /* ===== APP ===== */
         .app { max-width: 1400px; margin: 0 auto; padding: 20px; }
 
@@ -113,6 +117,43 @@
             .filmdays-add { grid-template-columns: 1fr 1fr; }
             .filmdays-add button { grid-column: 1 / -1; }
         }
+
+        /* ===== TABS ===== */
+        .tabs { display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 1px solid var(--border); }
+        .tab-btn { padding: 10px 18px; background: transparent; border: none; border-bottom: 2px solid transparent; color: var(--muted); font-family: 'Red Hat Mono', monospace; font-size: 12px; font-weight: 600; cursor: pointer; text-transform: uppercase; letter-spacing: 1.5px; transition: all 0.2s; margin-bottom: -1px; }
+        .tab-btn:hover { color: var(--pink); }
+        .tab-btn.active { color: var(--pink); border-bottom-color: var(--pink); }
+        .tab-badge { font-size: 10px; opacity: 0.7; margin-left: 5px; }
+        .view { display: none; }
+        .view.active { display: block; }
+
+        /* ===== SCRIPTS ===== */
+        .scripts-hint { font-family: 'Red Hat Mono', monospace; font-size: 10px; color: var(--muted); margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .scripts-list { display: flex; flex-direction: column; gap: 16px; margin-bottom: 40px; }
+        .script-card { background: var(--bg-secondary); border: 1px solid var(--border); border-left: 3px solid var(--todo); border-radius: 6px; padding: 18px; transition: border-color 0.18s; }
+        .script-card.review { border-left-color: var(--inprogress); }
+        .script-card.approved { border-left-color: var(--done); }
+        .script-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 6px; }
+        .script-title { font-family: 'Red Hat Mono', monospace; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text); word-break: break-word; }
+        .script-head-actions { display: flex; gap: 6px; flex-shrink: 0; }
+        .script-btn { padding: 5px 11px; background: var(--header-bg); border: none; color: var(--text); border-radius: 3px; font-family: 'Red Hat Mono', monospace; font-size: 10px; font-weight: 600; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; transition: all 0.2s; white-space: nowrap; }
+        .script-btn:hover { background: var(--pink); color: var(--bg-primary); }
+        .script-btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--muted); }
+        .script-btn-ghost:hover { border-color: var(--pink); color: var(--pink); background: transparent; }
+        .script-btn-delete { background: #5a1a1a; color: #f07070; }
+        .script-btn-delete:hover { background: #f07070; color: #fff; }
+        .script-edited { font-family: 'Red Hat Mono', monospace; font-size: 10px; color: var(--muted); margin-bottom: 12px; }
+        .script-body { background: var(--bg-primary); border: 1px solid var(--border); border-radius: 4px; padding: 16px; font-family: 'Red Hat Text', sans-serif; font-size: 14px; line-height: 1.75; white-space: pre-wrap; word-break: break-word; }
+        .script-body.empty { color: var(--muted); font-style: italic; }
+        .script-edit-area { display: flex; flex-direction: column; gap: 10px; }
+        .script-edit-title { padding: 9px 11px; background: var(--bg-primary); border: 1px solid var(--pink); color: var(--text); border-radius: 4px; font-family: 'Red Hat Mono', monospace; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
+        .script-edit-title:focus, .script-edit-text:focus { outline: none; }
+        .script-edit-text { min-height: 260px; padding: 16px; background: var(--bg-primary); border: 1px solid var(--pink); color: var(--text); border-radius: 4px; font-family: 'Red Hat Text', sans-serif; font-size: 14px; line-height: 1.75; resize: vertical; }
+        .script-edit-actions { display: flex; gap: 8px; }
+        .script-footer { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+        .script-comments { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); display: none; }
+        .script-comments.open { display: block; }
+        .scripts-empty { color: var(--muted); font-size: 13px; font-style: italic; padding: 30px 0; text-align: center; }
 
         /* ===== SORT BAR ===== */
         .sort-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
@@ -252,11 +293,21 @@
         <div class="header-main">Face2Face</div>
         <div class="header-sub">Reklamfilm 26.05</div>
         <div class="header-actions">
-            <button class="btn-add" onclick="openAddModal()">+ Add Task</button>
+            <button class="btn-add" id="btnAddTask" onclick="openAddModal()">+ Add Task</button>
+            <button class="btn-add" id="btnAddScript" onclick="openAddScriptModal()" style="display:none;">+ Add Script</button>
             <button id="notifBtn" class="btn-logout" onclick="showNtfyInfo()" style="display:none;">Notifications</button>
             <button class="btn-logout" onclick="logout()">Logout</button>
         </div>
     </div>
+
+    <!-- TABS -->
+    <div class="tabs">
+        <button class="tab-btn active" id="tab-tasks" onclick="setTab('tasks')">Tasks <span class="tab-badge" id="badgeTasks"></span></button>
+        <button class="tab-btn" id="tab-scripts" onclick="setTab('scripts')">Scripts <span class="tab-badge" id="badgeScripts"></span></button>
+    </div>
+
+    <!-- ===== VIEW: TASKS ===== -->
+    <div class="view active" id="view-tasks">
 
     <!-- FILM DAYS -->
     <div class="filmdays">
@@ -305,6 +356,14 @@
             <div class="tasks-list" id="col-done"></div>
         </div>
     </div>
+
+    </div><!-- /view-tasks -->
+
+    <!-- ===== VIEW: SCRIPTS ===== -->
+    <div class="view" id="view-scripts">
+        <div class="scripts-hint">Both SHP and client can edit every script. Changes save straight to the board.</div>
+        <div class="scripts-list" id="scriptsList"></div>
+    </div>
 </div>
 
 <!-- ADD TASK MODAL -->
@@ -322,6 +381,25 @@
         <div class="form-actions">
             <button class="btn-primary" onclick="createTask()">Create Task</button>
             <button class="btn-secondary" onclick="closeAddModal()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<!-- ADD SCRIPT MODAL -->
+<div id="addScriptModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">New Script <button class="modal-close" onclick="closeAddScriptModal()">×</button></div>
+        <div class="form-group">
+            <label class="form-label">Title</label>
+            <input id="newScriptTitle" class="form-input" placeholder="Manus 5">
+        </div>
+        <div class="form-group">
+            <label class="form-label">Script</label>
+            <textarea id="newScriptText" class="form-textarea" style="min-height:200px; line-height:1.75;" placeholder="Write the script..."></textarea>
+        </div>
+        <div class="form-actions">
+            <button class="btn-primary" onclick="createScript()">Create Script</button>
+            <button class="btn-secondary" onclick="closeAddScriptModal()">Cancel</button>
         </div>
     </div>
 </div>
@@ -397,6 +475,8 @@
     const NTFY_TOPIC = "shp-face2face-reklamfilm2605";
     const COLLECTION = "face2face_reklamfilm";
     const FILMDAYS_COLLECTION = COLLECTION + "_filmdays";
+    const SCRIPTS_COLLECTION = COLLECTION + "_scripts";
+    const SEED_DOC = "__seeded";
 
     let db;
     let currentRole = null;
@@ -407,6 +487,14 @@
     let tasksUnsub = null;
     let filmdaysUnsub = null;
     let allFilmdays = [];
+    let allScripts = [];
+    let scriptsUnsub = null;
+    let currentTab = "tasks";
+    let editingScriptId = null;
+    let editingCardEl = null;
+    let openScriptComments = new Set();
+    let scriptCommentDrafts = {};
+    let seedAttempted = false;
     let datePickerInstance = null;
     let startPickerInstance = null;
     let endPickerInstance = null;
@@ -472,6 +560,8 @@
         }
         startListening();
         startListeningFilmdays();
+        startListeningScripts();
+        setTab(currentTab);
     }
 
     function initFilmdayPickers() {
@@ -502,8 +592,16 @@
         sessionStorage.clear();
         if (tasksUnsub) tasksUnsub();
         if (filmdaysUnsub) filmdaysUnsub();
+        if (scriptsUnsub) scriptsUnsub();
         allTasks = [];
         allFilmdays = [];
+        allScripts = [];
+        editingScriptId = null;
+        editingCardEl = null;
+        openScriptComments = new Set();
+        scriptCommentDrafts = {};
+        seedAttempted = false;
+        currentTab = "tasks";
         currentRole = null;
         currentUser = null;
         document.getElementById("appScreen").style.display = "none";
@@ -657,6 +755,301 @@
         return dateStr + timeStr;
     }
 
+    // ===== TABS =====
+    function setTab(tab) {
+        currentTab = tab;
+        document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+        document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+        document.getElementById("tab-" + tab).classList.add("active");
+        document.getElementById("view-" + tab).classList.add("active");
+        document.getElementById("btnAddTask").style.display = tab === "tasks" ? "inline-block" : "none";
+        document.getElementById("btnAddScript").style.display = tab === "scripts" ? "inline-block" : "none";
+    }
+
+    // ===== SCRIPTS =====
+    const SEED_SCRIPTS = [
+        {
+            title: "Manus 1",
+            text: `Du vet den där känslan på söndagskvällen… när man redan vill att veckan ska vara över?
+
+Den hade jag också.
+
+Nu jobbar jag på Face2Face.
+Jag träffar nya människor varje dag, jobbar med stora varumärken, och ju bättre jag blir desto mer tjänar jag.
+
+Det är högt tempo, socialt och inte för alla.
+Men om du har driv, då kommer du älska det.
+
+"Ansök här" (eller något)`
+        },
+        {
+            title: "Manus 2",
+            text: `Du vet den där känslan på söndagskvällen… när man redan vill att veckan ska vara över?
+
+Den hade jag också.
+
+Nu jobbar jag på Face2Face.
+Jag träffar nya människor varje dag, jobbar med stora varumärken, och ju bättre jag blir desto mer tjänar jag.
+
+Det är högt tempo, socialt och inte för alla.
+Men om du har driv, Ansök här`
+        },
+        {
+            title: "Manus 3",
+            text: `Du vet den där känslan på söndagskvällen... när du tänker på jobbet imorgon?
+
+Den har jag inte längre. På Face2Face händer det grejer varje dag nya människor, nya utmaningar, och du styr din egen inkomst.
+
+Vill du också ha ett roligt jobb ansök här!`
+        },
+        {
+            title: "Manus 4",
+            text: `Om du fortfarande räknar ner minuterna till lunchen, lyssna här!
+
+På Face2Face möter du människor varje dag, för några av Sveriges mest kända varumärken.
+
+Du får utbildning, du får ansvar, och du kan klättra snabbt. Det enda som krävs är att du vill.
+Ansök här`
+        }
+    ];
+
+    function startListeningScripts() {
+        if (!db) return;
+        scriptsUnsub = db.collection(SCRIPTS_COLLECTION).onSnapshot((snap) => {
+            const hasSeedDoc = snap.docs.some(d => d.id === SEED_DOC);
+            allScripts = [];
+            snap.forEach(doc => {
+                if (doc.id === SEED_DOC) return;
+                allScripts.push({ id: doc.id, ...doc.data() });
+            });
+            if (!hasSeedDoc && !seedAttempted) { seedScripts(); return; }
+            renderScripts();
+        });
+    }
+
+    function seedScripts() {
+        seedAttempted = true;
+        const batch = db.batch();
+        SEED_SCRIPTS.forEach((s, i) => {
+            batch.set(db.collection(SCRIPTS_COLLECTION).doc("manus-" + (i + 1)), {
+                title: s.title,
+                text: s.text,
+                status: "draft",
+                order: i + 1,
+                comments: [],
+                created: new Date(),
+                lastEditedBy: null,
+                lastEditedAt: null
+            });
+        });
+        batch.set(db.collection(SCRIPTS_COLLECTION).doc(SEED_DOC), { seeded: true, created: new Date() });
+        batch.commit().catch(e => { console.error("Seed failed:", e); renderScripts(); });
+    }
+
+    function sortedScripts() {
+        return [...allScripts].sort((a, b) => {
+            const ao = a.order != null ? a.order : 999;
+            const bo = b.order != null ? b.order : 999;
+            return ao !== bo ? ao - bo : toMs(a.created) - toMs(b.created);
+        });
+    }
+
+    function renderScripts() {
+        const list = document.getElementById("scriptsList");
+        if (!list) return;
+
+        // keep unsent comment drafts alive across live updates
+        list.querySelectorAll(".script-comment-input").forEach(t => {
+            if (t.value.trim()) scriptCommentDrafts[t.dataset.id] = t.value;
+            else delete scriptCommentDrafts[t.dataset.id];
+        });
+
+        const scripts = sortedScripts();
+        document.getElementById("badgeScripts").textContent = scripts.length ? "(" + scripts.length + ")" : "";
+
+        list.innerHTML = "";
+        if (scripts.length === 0) {
+            list.innerHTML = '<div class="scripts-empty">No scripts yet. Add the first one.</div>';
+            return;
+        }
+        scripts.forEach(s => {
+            // never blow away a script someone is typing in
+            if (s.id === editingScriptId && editingCardEl) { list.appendChild(editingCardEl); return; }
+            list.appendChild(makeScriptCard(s));
+        });
+    }
+
+    function makeScriptCard(s) {
+        const div = document.createElement("div");
+        const status = s.status || "draft";
+        div.className = "script-card " + status;
+        div.id = "script-" + s.id;
+
+        const statuses = [
+            { val: "draft", label: "Draft" },
+            { val: "review", label: "Review" },
+            { val: "approved", label: "Approved" }
+        ];
+        const pillsHtml = statuses.map(st =>
+            `<button class="status-pill ${status === st.val ? "active-" + st.val : ""}" onclick="setScriptStatus('${s.id}','${st.val}')">${st.label}</button>`
+        ).join("");
+
+        const n = (s.comments || []).length;
+        const edited = s.lastEditedBy
+            ? "Edited by " + esc(s.lastEditedBy) + " · " + absDate(new Date(toMs(s.lastEditedAt)))
+            : "Not edited yet";
+        const isOpen = openScriptComments.has(s.id);
+
+        div.innerHTML = `
+            <div class="script-head">
+                <div class="script-title">${esc(s.title)}</div>
+                <div class="script-head-actions">
+                    <button class="script-btn" onclick="startEditScript('${s.id}')">Edit</button>
+                    <button class="script-btn script-btn-delete" onclick="deleteScript('${s.id}')">Delete</button>
+                </div>
+            </div>
+            <div class="script-edited">${edited}</div>
+            <div class="script-body${s.text ? "" : " empty"}">${s.text ? esc(s.text) : "Empty script. Click Edit to write it."}</div>
+            <div class="script-footer">
+                <div class="card-status-pills" style="margin-top:0;">${pillsHtml}</div>
+                <button class="script-btn script-btn-ghost" onclick="toggleScriptComments('${s.id}')">Comments${n > 0 ? " (" + n + ")" : ""}</button>
+            </div>
+            <div class="script-comments${isOpen ? " open" : ""}" id="scriptComments-${s.id}">
+                <div class="comments-title">Comments</div>
+                <div class="comments-list" id="scriptCommentsList-${s.id}"></div>
+                <div class="add-comment-form">
+                    <textarea class="add-comment-textarea script-comment-input" data-id="${s.id}" id="scriptCommentInput-${s.id}" placeholder="Add a comment..."></textarea>
+                    <button class="add-comment-button" onclick="postScriptComment('${s.id}')">Post Comment</button>
+                </div>
+            </div>`;
+
+        renderScriptComments(div.querySelector("#scriptCommentsList-" + s.id), s.comments || []);
+        const draft = scriptCommentDrafts[s.id];
+        if (draft) div.querySelector("#scriptCommentInput-" + s.id).value = draft;
+        return div;
+    }
+
+    function renderScriptComments(el, comments) {
+        if (!el) return;
+        el.innerHTML = "";
+        if (!comments.length) {
+            el.innerHTML = '<div class="no-comments">No comments yet</div>';
+            return;
+        }
+        comments.forEach(c => {
+            const d = document.createElement("div");
+            d.className = "comment";
+            const ts = c.created?.toDate ? c.created.toDate() : new Date(c.created);
+            d.innerHTML = `<div class="comment-author">${esc(c.author)}</div><div class="comment-text">${esc(c.text)}</div><div class="comment-time">${absDate(ts)}</div>`;
+            el.appendChild(d);
+        });
+    }
+
+    function toggleScriptComments(id) {
+        const el = document.getElementById("scriptComments-" + id);
+        if (!el) return;
+        const nowOpen = !el.classList.contains("open");
+        el.classList.toggle("open", nowOpen);
+        if (nowOpen) { openScriptComments.add(id); el.querySelector("textarea").focus(); }
+        else openScriptComments.delete(id);
+    }
+
+    function postScriptComment(id) {
+        const input = document.getElementById("scriptCommentInput-" + id);
+        const text = input.value.trim();
+        if (!text) return;
+        const s = allScripts.find(x => x.id === id);
+        db.collection(SCRIPTS_COLLECTION).doc(id).update({
+            comments: firebase.firestore.FieldValue.arrayUnion({ author: currentUser, text, created: new Date() })
+        }).then(() => {
+            input.value = "";
+            delete scriptCommentDrafts[id];
+            notify("Comment on " + (s ? s.title : "script") + ": " + text.substring(0, 60));
+        });
+    }
+
+    function setScriptStatus(id, status) {
+        const s = allScripts.find(x => x.id === id);
+        if (!s || (s.status || "draft") === status) return;
+        db.collection(SCRIPTS_COLLECTION).doc(id).update({ status }).then(() => {
+            notify((s.title || "Script") + " marked as \"" + status + "\"");
+        });
+    }
+
+    function startEditScript(id) {
+        const s = allScripts.find(x => x.id === id);
+        const card = document.getElementById("script-" + id);
+        if (!s || !card) return;
+        editingScriptId = id;
+        editingCardEl = card;
+        card.innerHTML = `
+            <div class="script-edit-area">
+                <input class="script-edit-title" id="editScriptTitle-${id}">
+                <textarea class="script-edit-text" id="editScriptText-${id}"></textarea>
+                <div class="script-edit-actions">
+                    <button class="script-btn" onclick="saveScript('${id}')">Save</button>
+                    <button class="script-btn script-btn-ghost" onclick="cancelEditScript()">Cancel</button>
+                </div>
+            </div>`;
+        card.querySelector("#editScriptTitle-" + id).value = s.title || "";
+        const ta = card.querySelector("#editScriptText-" + id);
+        ta.value = s.text || "";
+        ta.focus();
+    }
+
+    function saveScript(id) {
+        const card = document.getElementById("script-" + id);
+        if (!card) return;
+        const title = card.querySelector("#editScriptTitle-" + id).value.trim();
+        const text = card.querySelector("#editScriptText-" + id).value;
+        if (!title) { alert("Title is required"); return; }
+        db.collection(SCRIPTS_COLLECTION).doc(id).update({
+            title, text, lastEditedBy: currentUser, lastEditedAt: new Date()
+        }).then(() => {
+            editingScriptId = null;
+            editingCardEl = null;
+            renderScripts();
+            notify(title + " was edited");
+        });
+    }
+
+    function cancelEditScript() {
+        editingScriptId = null;
+        editingCardEl = null;
+        renderScripts();
+    }
+
+    function createScript() {
+        const title = document.getElementById("newScriptTitle").value.trim();
+        if (!title) { alert("Title is required"); return; }
+        const text = document.getElementById("newScriptText").value;
+        const maxOrder = allScripts.reduce((m, s) => Math.max(m, s.order != null ? s.order : 0), 0);
+        db.collection(SCRIPTS_COLLECTION).add({
+            title, text, status: "draft", order: maxOrder + 1, comments: [],
+            created: new Date(), lastEditedBy: currentUser, lastEditedAt: new Date()
+        }).then(() => {
+            closeAddScriptModal();
+            notify("New script added: " + title);
+        });
+    }
+
+    function deleteScript(id) {
+        const s = allScripts.find(x => x.id === id);
+        if (!confirm("Delete " + (s ? s.title : "this script") + "?")) return;
+        if (editingScriptId === id) { editingScriptId = null; editingCardEl = null; }
+        db.collection(SCRIPTS_COLLECTION).doc(id).delete().then(() => {
+            notify("Script deleted: " + (s ? s.title : ""));
+        });
+    }
+
+    function openAddScriptModal() {
+        document.getElementById("newScriptTitle").value = "Manus " + (allScripts.length + 1);
+        document.getElementById("newScriptText").value = "";
+        document.getElementById("addScriptModal").classList.add("active");
+        setTimeout(() => document.getElementById("newScriptTitle").focus(), 50);
+    }
+    function closeAddScriptModal() { document.getElementById("addScriptModal").classList.remove("active"); }
+
     // ===== SORT =====
     function setSort(mode) {
         currentSort = mode;
@@ -687,6 +1080,7 @@
 
     // ===== RENDER =====
     function renderBoard() {
+        document.getElementById("badgeTasks").textContent = allTasks.length ? "(" + allTasks.length + ")" : "";
         const cols = { todo: [], inprogress: [], done: [] };
         sortedTasks(allTasks).forEach(t => {
             const s = t.status || "todo";
@@ -913,7 +1307,7 @@
     }
 
     // ===== CLOSE ON BACKDROP =====
-    ["addModal", "detailModal", "ntfyModal"].forEach(id => {
+    ["addModal", "detailModal", "ntfyModal", "addScriptModal"].forEach(id => {
         document.getElementById(id).addEventListener("click", e => {
             if (e.target.id === id) document.getElementById(id).classList.remove("active");
         });
